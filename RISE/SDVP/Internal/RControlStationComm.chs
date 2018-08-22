@@ -13,6 +13,8 @@ module RISE.SDVP.Internal.RControllStationComm
 import Foreign.Ptr
 import Foreign.Marshal.Array
 
+import Data.Word
+import Data.Int
 
 #include <rcontrolstationcomm_wrapper.h>
 
