@@ -1,7 +1,6 @@
 
 
-
-all: RControlStationComm.chs
+all: 
 	c2hs RControlStationComm.chs --cppopts='-I../../../rise_sdvp/Linux/RControlStationComm/'
 
 clean:

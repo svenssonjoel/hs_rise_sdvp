@@ -1,3 +1,3 @@
 [submodule "rise_sdvp"]
 	path = rise_sdvp
-	url = git@github.com:vedderb/rise_sdvp
+	url = https://github.com/vedderb/rise_sdvp

@@ -4,7 +4,23 @@
 
 {-# LINE 1 "RControlStationComm.chs" #-}
 
+module RISE.SDVP.Internal.RControllStationComm
+  ( rcscConnectTcp,
+    rcscDisconnectTcp,
+    rcscSetDebugLevel,
+    rcscHasError,
+    rcscLastError,
+    rcscClearRoute,
+    rcscSetAutopilotActive,
+    rcscRcControl ) where 
+import qualified Foreign.C.String as C2HSImp
+import qualified Foreign.C.Types as C2HSImp
+import qualified Foreign.Marshal.Utils as C2HSImp
+import qualified Foreign.Ptr as C2HSImp
 
+
+    
+   
 
 
 rcscConnectTcp :: (String) -> (Int) -> IO ((Bool))
@@ -21,7 +37,7 @@ rcscDisconnectTcp =
   rcscDisconnectTcp'_ >>
   return ()
 
-{-# LINE 7 "RControlStationComm.chs" #-}
+{-# LINE 17 "RControlStationComm.chs" #-}
 
 
 rcscSetDebugLevel :: (Int) -> IO ()
@@ -30,7 +46,7 @@ rcscSetDebugLevel a1 =
   rcscSetDebugLevel'_ a1' >>
   return ()
 
-{-# LINE 9 "RControlStationComm.chs" #-}
+{-# LINE 19 "RControlStationComm.chs" #-}
 
 
 rcscHasError :: IO ((Bool))
@@ -39,7 +55,7 @@ rcscHasError =
   let {res' = C2HSImp.toBool res} in
   return (res')
 
-{-# LINE 11 "RControlStationComm.chs" #-}
+{-# LINE 21 "RControlStationComm.chs" #-}
 
 
 rcscLastError :: IO ((String))
@@ -48,7 +64,7 @@ rcscLastError =
   C2HSImp.peekCString res >>= \res' ->
   return (res')
 
-{-# LINE 13 "RControlStationComm.chs" #-}
+{-# LINE 23 "RControlStationComm.chs" #-}
 
 
 {-
@@ -90,7 +106,7 @@ rcscRcControl a1 a2 a3 a4 =
   let {res' = C2HSImp.toBool res} in
   return (res')
 
-{-# LINE 28 "RControlStationComm.chs" #-}
+{-# LINE 38 "RControlStationComm.chs" #-}
 
 
 {- 
@@ -98,12 +114,6 @@ bool rcsc_getRoutePoints(int car, ROUTE_POINT *route, int *len,
                          int maxLen, int mapRoute, int timeoutMs);
 bool rcsc_sendTerminalCmd(int car, char *cmd, char *reply, int timeoutMs);
 -} 
-
-import qualified Foreign.C.String as C2HSImp
-import qualified Foreign.C.Types as C2HSImp
-import qualified Foreign.Marshal.Utils as C2HSImp
-import qualified Foreign.Ptr as C2HSImp
-
 
 foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_connectTcp"
   rcscConnectTcp'_ :: ((C2HSImp.Ptr C2HSImp.CChar) -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-})))

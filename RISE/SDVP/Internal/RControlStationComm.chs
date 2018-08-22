@@ -1,5 +1,15 @@
 
-
+module RISE.SDVP.Internal.RControllStationComm
+  ( rcscConnectTcp,
+    rcscDisconnectTcp,
+    rcscSetDebugLevel,
+    rcscHasError,
+    rcscLastError,
+    rcscClearRoute,
+    rcscSetAutopilotActive,
+    rcscRcControl ) where 
+    
+   
 #include <rcontrolstationcomm_wrapper.h>
 
 {# fun rcsc_connectTcp as ^ { `String', `Int' } -> `Bool' #} 
