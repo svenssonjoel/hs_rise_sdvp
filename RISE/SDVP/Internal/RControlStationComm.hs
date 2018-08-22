@@ -19,10 +19,17 @@ import qualified Foreign.Marshal.Utils as C2HSImp
 import qualified Foreign.Ptr as C2HSImp
 
 
-    
+
+import RISE.SDVP.Internal.CarState 
    
 
 
+-- Marshalling 
+alloc3 = allocaArray 3
+
+peek3 d = peekarray 3 d 
+  
+-- C Bindings 
 rcscConnectTcp :: (String) -> (Int) -> IO ((Bool))
 rcscConnectTcp a1 a2 =
   C2HSImp.withCString a1 $ \a1' -> 
@@ -37,7 +44,7 @@ rcscDisconnectTcp =
   rcscDisconnectTcp'_ >>
   return ()
 
-{-# LINE 17 "RControlStationComm.chs" #-}
+{-# LINE 24 "RControlStationComm.chs" #-}
 
 
 rcscSetDebugLevel :: (Int) -> IO ()
@@ -46,7 +53,7 @@ rcscSetDebugLevel a1 =
   rcscSetDebugLevel'_ a1' >>
   return ()
 
-{-# LINE 19 "RControlStationComm.chs" #-}
+{-# LINE 26 "RControlStationComm.chs" #-}
 
 
 rcscHasError :: IO ((Bool))
@@ -55,7 +62,7 @@ rcscHasError =
   let {res' = C2HSImp.toBool res} in
   return (res')
 
-{-# LINE 21 "RControlStationComm.chs" #-}
+{-# LINE 28 "RControlStationComm.chs" #-}
 
 
 rcscLastError :: IO ((String))
@@ -64,17 +71,68 @@ rcscLastError =
   C2HSImp.peekCString res >>= \res' ->
   return (res')
 
-{-# LINE 23 "RControlStationComm.chs" #-}
+{-# LINE 30 "RControlStationComm.chs" #-}
 
 
-{-
-bool rcsc_getState(int car, CAR_STATE *state, int timeoutMs);
-bool rcsc_getEnuRef(int car, bool fromMap, double *llh, int timeoutMs);
-bool rcsc_setEnuRef(int car, double *llh, int timeoutMs);
-bool rcsc_addRoutePoints(int car, ROUTE_POINT *route, int len,
-                         bool replace, bool mapOnly,
-                         int mapRoute, int timeoutMs);
--}
+-- Assumes (for now) the Ptr is allocated and has enough room for a CAR_STATE
+rcscGetState :: (Int) -> (Ptr ()) -> (Int) -> IO ((Bool))
+rcscGetState a1 a2 a3 =
+  let {a1' = fromIntegral a1} in 
+  let {a2' = id a2} in 
+  let {a3' = fromIntegral a3} in 
+  rcscGetState'_ a1' a2' a3' >>= \res ->
+  let {res' = C2HSImp.toBool res} in
+  return (res')
+
+{-# LINE 33 "RControlStationComm.chs" #-}
+
+
+-- Assumes that the memory Ptr points to contains enough doubles
+-- TODO: FIX!
+rcscGetEnuRef :: (Int) -> (Bool) -> (Int) -> IO ((Bool), ([Double]))
+rcscGetEnuRef a1 a2 a4 =
+  let {a1' = fromIntegral a1} in 
+  let {a2' = C2HSImp.fromBool a2} in 
+  alloc3 $ \a3' -> 
+  let {a4' = fromIntegral a4} in 
+  rcscGetEnuRef'_ a1' a2' a3' a4' >>= \res ->
+  let {res' = C2HSImp.toBool res} in
+  let {a3'' = peek3  a3'} in 
+  return (res', a3'')
+
+{-# LINE 37 "RControlStationComm.chs" #-}
+
+
+-- TODO: FIX!
+rcscSetEnuRef :: (Int) -> ([Double]) -> (Int) -> IO ((Bool))
+rcscSetEnuRef a1 a2 a3 =
+  let {a1' = fromIntegral a1} in 
+  with a2 $ \a2' -> 
+  let {a3' = fromIntegral a3} in 
+  rcscSetEnuRef'_ a1' a2' a3' >>= \res ->
+  let {res' = C2HSImp.toBool res} in
+  return (res')
+
+{-# LINE 40 "RControlStationComm.chs" #-}
+
+
+-- TODO: FIX! 
+rcscAddRoutePoints :: (Int) -> (Ptr ()) -> (Int) -> (Bool) -> (Bool) -> (Int) -> (Int) -> IO ((Bool))
+rcscAddRoutePoints a1 a2 a3 a4 a5 a6 a7 =
+  let {a1' = fromIntegral a1} in 
+  let {a2' = id a2} in 
+  let {a3' = fromIntegral a3} in 
+  let {a4' = C2HSImp.fromBool a4} in 
+  let {a5' = C2HSImp.fromBool a5} in 
+  let {a6' = fromIntegral a6} in 
+  let {a7' = fromIntegral a7} in 
+  rcscAddRoutePoints'_ a1' a2' a3' a4' a5' a6' a7' >>= \res ->
+  let {res' = C2HSImp.toBool res} in
+  return (res')
+
+{-# LINE 43 "RControlStationComm.chs" #-}
+
+--                                car      RPs       len    replace  mapOnly  mapRoute  timeout
 
 rcscClearRoute :: (Int) -> (Int) -> (Int) -> IO ((Bool))
 rcscClearRoute a1 a2 a3 =
@@ -106,7 +164,7 @@ rcscRcControl a1 a2 a3 a4 =
   let {res' = C2HSImp.toBool res} in
   return (res')
 
-{-# LINE 38 "RControlStationComm.chs" #-}
+{-# LINE 50 "RControlStationComm.chs" #-}
 
 
 {- 
@@ -129,6 +187,18 @@ foreign import ccall safe "RControlStationComm.chs.h rcsc_hasError"
 
 foreign import ccall safe "RControlStationComm.chs.h rcsc_lastError"
   rcscLastError'_ :: (IO (C2HSImp.Ptr C2HSImp.CChar))
+
+foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_getState"
+  rcscGetState'_ :: (C2HSImp.CInt -> ((C2HSImp.Ptr ()) -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-}))))
+
+foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_getEnuRef"
+  rcscGetEnuRef'_ :: (C2HSImp.CInt -> (C2HSImp.CInt{-bool-} -> ((C2HSImp.Ptr C2HSImp.CDouble) -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-})))))
+
+foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_setEnuRef"
+  rcscSetEnuRef'_ :: (C2HSImp.CInt -> ((C2HSImp.Ptr C2HSImp.CDouble) -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-}))))
+
+foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_addRoutePoints"
+  rcscAddRoutePoints'_ :: (C2HSImp.CInt -> ((C2HSImp.Ptr ()) -> (C2HSImp.CInt -> (C2HSImp.CInt{-bool-} -> (C2HSImp.CInt{-bool-} -> (C2HSImp.CInt -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-}))))))))
 
 foreign import ccall safe "RControlStationComm.chs.h __c2hs_wrapped__rcsc_clearRoute"
   rcscClearRoute'_ :: (C2HSImp.CInt -> (C2HSImp.CInt -> (C2HSImp.CInt -> (IO C2HSImp.CInt{-bool-}))))

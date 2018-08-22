@@ -8,10 +8,17 @@ module RISE.SDVP.Internal.RControllStationComm
     rcscClearRoute,
     rcscSetAutopilotActive,
     rcscRcControl ) where 
-    
+
+import RISE.SDVP.Internal.CarState 
    
 #include <rcontrolstationcomm_wrapper.h>
 
+-- Marshalling 
+alloc3 = allocaArray 3
+
+peek3 d = peekarray 3 d 
+  
+-- C Bindings 
 {# fun rcsc_connectTcp as ^ { `String', `Int' } -> `Bool' #} 
 
 {# fun rcsc_disconnectTcp as ^ {  } -> `()' #}
@@ -22,14 +29,19 @@ module RISE.SDVP.Internal.RControllStationComm
 
 {# fun rcsc_lastError as ^ { } -> `String' #}
 
-{-
-bool rcsc_getState(int car, CAR_STATE *state, int timeoutMs);
-bool rcsc_getEnuRef(int car, bool fromMap, double *llh, int timeoutMs);
-bool rcsc_setEnuRef(int car, double *llh, int timeoutMs);
-bool rcsc_addRoutePoints(int car, ROUTE_POINT *route, int len,
-                         bool replace, bool mapOnly,
-                         int mapRoute, int timeoutMs);
--}
+-- Assumes (for now) the Ptr is allocated and has enough room for a CAR_STATE
+{# fun rcsc_getState as ^ { `Int' , `Ptr ()' , `Int' } -> `Bool' #}
+
+-- Assumes that the memory Ptr points to contains enough doubles
+-- TODO: FIX!
+{# fun rcsc_getEnuRef as ^ { `Int' , `Bool' , alloc3- `[Double]' peek3 , `Int' } -> `Bool' #}
+
+-- TODO: FIX!
+{# fun rcsc_setEnuRef as ^ { `Int' , with* `[Double]' , `Int' } -> `Bool' #}
+
+-- TODO: FIX! 
+{# fun rcsc_addRoutePoints as ^ { `Int' , `Ptr ()' , `Int' , `Bool' , `Bool' , `Int' , `Int' } -> `Bool' #}
+--                                car      RPs       len    replace  mapOnly  mapRoute  timeout
 
 {# fun rcsc_clearRoute as ^ { `Int' , `Int' , `Int' } -> `Bool' #} 
 
