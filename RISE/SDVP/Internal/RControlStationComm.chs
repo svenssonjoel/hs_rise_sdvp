@@ -41,14 +41,10 @@ withDoubleArray dat f = withArray (map realToFrac dat :: [C2HSImp.CDouble]) f
 -- Assumes (for now) the Ptr is allocated and has enough room for a CAR_STATE
 {# fun rcsc_getState as ^ { `Int' , `Ptr ()' , `Int' } -> `Bool' #}
 
--- Assumes that the memory Ptr points to contains enough doubles
--- TODO: FIX!
 {# fun rcsc_getEnuRef as ^ { `Int' , `Bool' , alloc3- `[Double]' peek3Double* , `Int' } -> `Bool' #}
 
--- TODO: FIX!
 {# fun rcsc_setEnuRef as ^ { `Int' , withDoubleArray* `[Double]' , `Int' } -> `Bool' #}
 
--- TODO: FIX! 
 {# fun rcsc_addRoutePoints as ^ { `Int' , `Ptr ()' , `Int' , `Bool' , `Bool' , `Int' , `Int' } -> `Bool' #}
 --                                car      RPs       len    replace  mapOnly  mapRoute  timeout
 
